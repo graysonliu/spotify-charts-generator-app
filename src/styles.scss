@@ -1,0 +1,173 @@
+$width-high-bound: 640px;
+$width-low-bound: 320px;
+
+@mixin flex_justify_content {
+  display: flex;
+  justify-content: center;
+}
+
+html, body, #root, .app {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background-color: floralwhite;
+  @media screen and (max-width: $width-low-bound) {
+    font-size: 0.05*$width-low-bound;
+  }
+  @media screen and (min-width: $width-high-bound) {
+    font-size: 0.05*$width-high-bound;
+  }
+  @media screen and (max-width: $width-high-bound) and (min-width: $width-low-bound) {
+    font-size: 5vw;
+  }
+  overflow-x: hidden;
+}
+
+button {
+  cursor: pointer;
+  border-width: 0;
+  padding: 0;
+  outline: none;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg)
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@mixin rotating-img {
+  animation: rotation 3s linear infinite;
+}
+
+.image-link {
+  display: inline-flex;
+
+  img {
+    transition: 0.25s;
+  }
+
+  a, a:link, a:visited {
+    text-decoration: none;
+    display: flex;
+  }
+}
+
+%my-logo-shared {
+  display: inline-flex;
+
+  .image-link {
+    img {
+      height: 0.5rem;
+    }
+  }
+}
+
+.my-logo-small {
+  @extend %my-logo-shared;
+}
+
+.my-logo-header {
+  @extend %my-logo-shared;
+  @include flex_justify_content;
+  margin-top: 0.5rem;
+
+  .image-link {
+    img {
+      height: 2rem;
+      @include rotating-img
+    }
+
+    @media (any-hover: hover) {
+      img:hover {
+        animation-play-state: paused;
+      }
+    }
+  }
+}
+
+@mixin set_main_button_properties_given_height($height) {
+  height: $height;
+  border-radius: $height/2;
+  font-size: $height/2;
+}
+
+.main-button {
+  @include flex_justify_content;
+  margin-top: 1rem;
+
+  button {
+    @include set_main_button_properties_given_height(1.5rem);
+    width: 9rem;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 0.02rem;
+    background-color: #1DB954;
+  }
+
+  @media (any-hover: hover) {
+    button:hover {
+      background-color: #1ED760;
+    }
+  }
+
+  button:active {
+    background-color: #1aa34a;
+  }
+}
+
+%checkbox-item {
+  @include flex_justify_content;
+  white-space: pre;
+  $font-size: 0.8rem;
+  font-size: $font-size;
+  padding: $font-size/1.5;
+
+  input[type=checkbox] {
+    height: $font-size;
+    width: $font-size;
+  }
+}
+
+.region-item {
+  @extend %checkbox-item;
+}
+
+.select-all-item {
+  @extend %checkbox-item;
+  margin-top: 0.5rem;
+  margin-bottom: -0.75rem;
+}
+
+.region-list {
+  @include flex_justify_content;
+  flex-wrap: wrap;
+  margin: 1rem 1rem;
+}
+
+.description {
+  @include flex_justify_content;
+  margin-top: 0.5rem;
+
+  span {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
+.console-output {
+  display: flex;
+  margin: 0.5rem 5rem 0;
+  background-color: white;
+
+  span {
+    white-space: pre-wrap;
+    font-size: 0.5rem;
+  }
+}

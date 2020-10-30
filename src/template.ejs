@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <% for (item of htmlWebpackPlugin.options.meta) { %>
+        <meta<% for (key in item) { %> <%= key %>= "<%= item[key] %>"<% } %>>
+    <% } %>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+
+    <% if (htmlWebpackPlugin.options.googleAnalytics.measurement_id) { %>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async
+                src="https://www.googletagmanager.com/gtag/js?id=<%= htmlWebpackPlugin.options.googleAnalytics.measurement_id %>"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+
+            gtag('js', new Date());
+
+            gtag('config', '<%= htmlWebpackPlugin.options.googleAnalytics.measurement_id %>');
+        </script>
+    <% } %>
+
+    <!-- inject environment variables into pages at build time -->
+    <script type="text/javascript">
+        <% for (key in htmlWebpackPlugin.options.window) { %>
+        window['<%= key %>'] = <%= JSON.stringify(htmlWebpackPlugin.options.window[key]) %>;
+        <% } %>
+    </script>
+</head>
+<body>
+</body>
+</html>
