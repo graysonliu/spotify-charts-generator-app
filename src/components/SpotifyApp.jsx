@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import processURL from "../utils/process_url";
 import "../styles.scss"
 import "flag-icon-css/css/flag-icon.min.css"
@@ -8,30 +8,31 @@ import SelectAllCheckBox from "./SelectAllCheckBox";
 import MainButton from "./MainButton";
 import ConsoleOutput from "./ConsoleOutput";
 
-// the popup window
-let popup = null;
-// mapping region code to region name
-let regions = {};
-
 const SpotifyApp = (props) => {
     const [selected_list, set_selected_list] = useState({});
     const [user_name, set_user_name] = useState(null);
     const [user_id, set_user_id] = useState(null);
     const [console_text, set_console_text] = useState('');
+    // mapping region code to region name
+    const regions = useRef(null);
+    // the popup window
+    const popup = useRef(null);
 
     // getting region list, only once
     useEffect(() => {
         get_region_list();
     }, []);
 
-    // for receiving message from the popup window, only once
+    // for receiving message from the popup window
+    // we only need to set this event listener once
     useEffect(() => {
         const auth_callback = (event) => {
             // message source should be the popup window
-            if (event.source !== popup)
+            if (event.source !== popup.current)
                 return;
             event.source.close();
-            get_user_info(event.data.code);
+            popup.current = null;
+            get_user_info(event.data);
         };
         window.addEventListener("message", auth_callback, false);
     }, []);
@@ -65,10 +66,10 @@ const SpotifyApp = (props) => {
     }
 
     const get_region_list = async () => {
-        regions = await server_request('/charts/regions')
+        regions.current = await server_request('/charts/regions')
         const selected_list = {};
-        for (const [region_code, region_name] of Object.entries(regions)) {
-            regions[region_code] = region_name;
+        for (const [region_code, region_name] of Object.entries(regions.current)) {
+            regions.current[region_code] = region_name;
             selected_list[region_code] = false;
         }
         set_selected_list(selected_list);
@@ -86,11 +87,11 @@ const SpotifyApp = (props) => {
 
     window.spotifyAuthCanceledCallback = () => {
         // close the popup window
-        popup && popup.close();
+        popup.current && popup.current.close();
     };
 
     const handleClickLoginButton = () => {
-        popup = window.open('https://accounts.spotify.com/authorize' +
+        popup.current = window.open('https://accounts.spotify.com/authorize' +
             '?response_type=code' +
             '&client_id=' + window.env.client_id +
             (window.env.scopes ? '&scope=' + encodeURIComponent(window.env.scopes) : '') +
@@ -117,10 +118,10 @@ const SpotifyApp = (props) => {
     }
 
     const createPlaylists = async () => {
-        const regions = [];
+        const selected_regions = [];
         for (const region_code in selected_list) {
             if (selected_list[region_code]) {
-                regions.push(region_code);
+                selected_regions.push(region_code);
             }
         }
 
@@ -129,7 +130,7 @@ const SpotifyApp = (props) => {
             'POST',
             {
                 user_id: user_id,
-                regions
+                regions: selected_regions
             }
         )
 
@@ -147,8 +148,10 @@ const SpotifyApp = (props) => {
     if (!user_name && 'code' in queries) {
         // authenticated and this is a popup window
         // window.opener is the main window
-        window.opener && window.opener.postMessage({code: queries['code']}, window.env.redirect_uri);
-        window.opener = null; // otherwise it will send message twice
+        window.opener && window.opener.postMessage(queries['code'], window.env.redirect_uri);
+        // it seems that this component will be rendered twice
+        // to avoid sending message twice, we set its opener to null
+        window.opener = null;
         return (<div className='app'/>);
     }
     if (!user_name && 'error' in queries) {
@@ -190,15 +193,15 @@ const SpotifyApp = (props) => {
                         onClick={clearOutput}
                         text='Clear Output'/>}
 
-            {selected_list &&
+            {regions.current &&
             <SelectAllCheckBox
                 all_selected={checkIfAllSelected()}
                 handleClickSelectAll={handleClickSelectAll}
             />}
 
-            {selected_list &&
+            {regions.current &&
             <RegionList
-                regions={regions}
+                regions={regions.current}
                 selected_list={selected_list}
                 handleClickRegionItem={handleClickRegionItem}
             />}
