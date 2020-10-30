@@ -19,11 +19,24 @@ const SpotifyApp = (props) => {
     const [user_id, set_user_id] = useState(null);
     const [console_text, set_console_text] = useState('');
 
-    // only once
+    // getting region list, only once
     useEffect(() => {
         get_region_list();
     }, []);
 
+    // for receiving message from the popup window, only once
+    useEffect(() => {
+        const auth_callback = (event) => {
+            // message source should be the popup window
+            if (event.source !== popup)
+                return;
+            event.source.close();
+            get_user_info(event.data.code);
+        };
+        window.addEventListener("message", auth_callback, false);
+    }, []);
+
+    // console output should be cleared after user_name changes
     useEffect(() => {
         clearOutput();
     }, [user_name]);
@@ -61,24 +74,15 @@ const SpotifyApp = (props) => {
         set_selected_list(selected_list);
     }
 
-    const clearOutput = () => {
+    const clearOutput = async (code) => {
         set_console_text(() => `- Logged in as "${user_name}"`);
     }
 
-
-    window.spotifyAuthSuccessCallback = async (code) => {
-        // close the popup window
-        popup && popup.close();
-
-        // use 'code' to request token
-        const data = await server_request(`/users?code=${code}`);
-
-        console.log(data);
-        set_user_name(data['user_name']);
-        console.log(data['user_name']);
-
-        set_user_id(data['user_id']);
-    };
+    const get_user_info = async (code) => {
+        const user_info = await server_request(`/users?code=${code}`);
+        set_user_name(user_info['user_name']);
+        set_user_id(user_info['user_id']);
+    }
 
     window.spotifyAuthCanceledCallback = () => {
         // close the popup window
@@ -90,7 +94,7 @@ const SpotifyApp = (props) => {
             '?response_type=code' +
             '&client_id=' + window.env.client_id +
             (window.env.scopes ? '&scope=' + encodeURIComponent(window.env.scopes) : '') +
-            '&redirect_uri=' + encodeURIComponent(window.env.redirect_uri),
+            '&redirect_uri=' + encodeURIComponent(window.env.redirect_uri + '/'),
             'Login with Spotify');
     }
 
@@ -143,14 +147,15 @@ const SpotifyApp = (props) => {
     if (!user_name && 'code' in queries) {
         // authenticated and this is a popup window
         // window.opener is the main window
-        window.opener && window.opener.spotifyAuthSuccessCallback(queries['code']);
-        window.opener = null;
+        window.opener && window.opener.postMessage({code: queries['code']}, window.env.redirect_uri);
+        window.opener = null; // otherwise it will send message twice
         return (<div className='app'/>);
     }
     if (!user_name && 'error' in queries) {
         // authentication canceled and this is a popup window
         // window.opener is the main window
         window.opener && window.opener.spotifyAuthCanceledCallback();
+        window.opener = null;
         return (<div className='app'/>);
     }
 
