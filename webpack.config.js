@@ -56,6 +56,11 @@ module.exports = async (env, argv) => {
             path: path.resolve(__dirname, 'dist'),
             filename: '[name].bundle.js',
         },
+        devServer: {
+            contentBase: path.join(__dirname, ""),
+            port: 3001,
+            hotOnly: true
+        },
         plugins: [
             new webpack.DefinePlugin({
                 'process.env': JSON.stringify(dotenv.config().parsed)
@@ -91,14 +96,5 @@ module.exports = async (env, argv) => {
                 {skipgzip: true})
         ].filter(Boolean)
     };
-
-    if (isDevelopment) {
-        config.devServer = {
-            contentBase: path.join(__dirname, ""),
-            port: 3001,
-            hotOnly: true
-        }
-    }
-
     return config;
 };

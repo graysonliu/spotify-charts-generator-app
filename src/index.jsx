@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import SpotifyApp from "./components/SpotifyApp";
+import store from './store';
+import {Provider} from 'react-redux';
 
 
 function component() {
@@ -12,5 +14,10 @@ function component() {
 document.body.appendChild(component());
 
 ReactDOM.render(
-    <SpotifyApp/>,
-    document.getElementById("root"));
+    <React.StrictMode>
+        <Provider store={store}>
+            <SpotifyApp/>
+        </Provider>
+    </React.StrictMode>,
+    document.getElementById("root")
+);
