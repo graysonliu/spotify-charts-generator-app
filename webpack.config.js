@@ -95,12 +95,13 @@ module.exports = async (env, argv) => {
         ].filter(Boolean)
     };
 
-    if (isDevelopment)
-        config.devServer = {
-            ...config.devServer,
-            https: true,
-            key: fs.readFileSync('key.pem'),
-            cert: fs.readFileSync('cert.pem'),
-        }
+    // for HTTPS
+    // if (isDevelopment)
+    //     config.devServer = {
+    //         ...config.devServer,
+    //         https: true,
+    //         key: fs.readFileSync('key.pem'),
+    //         cert: fs.readFileSync('cert.pem'),
+    //     }
     return config;
 };
