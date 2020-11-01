@@ -5,6 +5,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const SitemapWebpackPlugin = require('sitemap-webpack-plugin').default;
 const dotenv = require('dotenv')
+const fs = require('fs');
 
 module.exports = async (env, argv) => {
     const paths = ['/spotify-charts-generator-static'];
@@ -93,5 +94,13 @@ module.exports = async (env, argv) => {
                 {skipgzip: true})
         ].filter(Boolean)
     };
+
+    if (isDevelopment)
+        config.devServer = {
+            ...config.devServer,
+            https: true,
+            key: fs.readFileSync('key.pem'),
+            cert: fs.readFileSync('cert.pem'),
+        }
     return config;
 };
