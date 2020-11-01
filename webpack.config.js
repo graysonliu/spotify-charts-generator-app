@@ -85,10 +85,7 @@ module.exports = async (env, argv) => {
                 // inject environment variables into pages at build time
                 window: {
                     env: {
-                        client_id: process.env.CLIENT_ID,
-                        redirect_uri: process.env.REDIRECT_URL,
-                        scopes: process.env.SCOPES,
-                        server_url: process.env.SERVER_URL,
+                        server_uri: process.env.SERVER_URI,
                     }
                 },
             }),

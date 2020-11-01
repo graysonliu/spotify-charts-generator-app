@@ -1,15 +1,15 @@
 export const server_request = async (endpoint, method = 'GET', data) => {
-    const server_url = window.env.server_url;
+    const server_uri = window.env.server_uri;
     const response =
         method.toUpperCase() === 'GET' ?
             await fetch(
-                server_url + endpoint,
+                server_uri + endpoint,
                 {
                     method: method
                 }
             ) :
             await fetch(
-                server_url + endpoint,
+                server_uri + endpoint,
                 {
                     method: method,
                     headers: {

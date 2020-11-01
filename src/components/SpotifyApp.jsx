@@ -5,7 +5,7 @@ import "flag-icon-css/css/flag-icon.min.css"
 import MyLogo from "./MyLogo";
 import Regions from "./regions/Regions";
 import MainButton from "./MainButton";
-import ConsoleOutput from "./ConsoleOutput";
+import Output from "./Output";
 import {server_request} from "../utils/server_request";
 import {useDispatch, useSelector} from "react-redux";
 import {changeRegionsCheck, changeAllCheck} from "./regions/regionsCheckSlice";
@@ -13,7 +13,7 @@ import {changeRegionsCheck, changeAllCheck} from "./regions/regionsCheckSlice";
 const SpotifyApp = (props) => {
     const [userName, setUserName] = useState(null);
     const [userId, setUserId] = useState(null);
-    const [consoleText, setConsoleText] = useState('');
+    const [outputText, setOutputText] = useState('');
     const [registeredRegions, setRegisteredRegions] = useState([]);
 
     // the popup window
@@ -39,15 +39,27 @@ const SpotifyApp = (props) => {
     }, [regionNameList]);
 
     useEffect(() => {
-        reset();
-    }, [userName, registeredRegions]);
+        loginReset();
+    }, [userName]);
 
-    const reset = () => {
-        setConsoleText(() => `- Logged in as "${userName}"`);
+    useEffect(() => {
+        outputRegisteredRegions();
+    }, [registeredRegions]);
+
+    const resetOutput = () => {
+        loginReset();
+        outputRegisteredRegions();
+    }
+
+    const loginReset = () => {
+        setOutputText(() => `- Logged in as "${userName}"`);
+    }
+
+    const outputRegisteredRegions = () => {
         if (registeredRegions.length === 0)
-            appendConsoleText('No Registered Regions');
+            appendOutputText('No Registered Regions');
         else
-            appendConsoleText('Registered Regions: ' +
+            appendOutputText('Registered Regions: ' +
                 registeredRegions.map(region_code => regionNameList[region_code])
                     .reduce((str, region_name) => `${str}, ${region_name}`)
             );
@@ -58,25 +70,25 @@ const SpotifyApp = (props) => {
             registeredRegionsCheck[region_code] = true;
         }
         dispatch(changeRegionsCheck(registeredRegionsCheck));
-    }
+    };
 
     const get_user_info = async (code) => {
-        const user_info = await server_request(`/users?code=${code}`);
-        setUserName(user_info['user_name']);
-        setUserId(user_info['user_id']);
-        setRegisteredRegions(user_info['registered_regions']);
+        const body = await server_request(`/users?code=${code}`);
+        setUserName(body['user_name']);
+        setUserId(body['user_id']);
+        setRegisteredRegions(body['registered_regions']);
     }
 
     const handleClickLoginButton = () => {
         popup.current = window.open('https://accounts.spotify.com/authorize' +
             '?response_type=code' +
-            '&client_id=' + window.env.client_id +
-            (window.env.scopes ? '&scope=' + encodeURIComponent(window.env.scopes) : '') +
-            '&redirect_uri=' + encodeURIComponent(window.env.redirect_uri),
+            '&client_id=' + props.client_id +
+            (props.scopes ? '&scope=' + encodeURIComponent(props.scopes) : '') +
+            '&redirect_uri=' + encodeURIComponent(props.redirect_uri),
             'Login with Spotify');
     }
 
-    const createPlaylists = async () => {
+    const registerRegions = async () => {
         const selected_regions = [];
         for (const [region_code, checked] of Object.entries(regionCheckList)) {
             if (checked) {
@@ -84,18 +96,22 @@ const SpotifyApp = (props) => {
             }
         }
 
-        await server_request(
+        appendOutputText('Updating Registered Regions...');
+
+        const body = await server_request(
             '/charts',
             'POST',
             {
                 user_id: userId,
-                regions: selected_regions
+                regions_to_register: selected_regions
             }
         )
+
+        setRegisteredRegions(body['registered_regions']);
     }
 
-    const appendConsoleText = (text) => {
-        setConsoleText((preText) => `${preText}\n- ${text}`);
+    const appendOutputText = (text) => {
+        setOutputText((preText) => `${preText}\n- ${text}`);
     }
 
     const queries = processURL(window.location.href)
@@ -117,7 +133,7 @@ const SpotifyApp = (props) => {
         <div className='app'>
             <MyLogo style='my-logo-header'/>
             <div className='description'>
-                    <span>Create playlists of daily charts from&nbsp;
+                    <span>Create and keep updating playlists of daily charts from&nbsp;
                         <a href='https://spotifycharts.com' target='_blank'>Spotify Charts</a>
                         !
                     </span>
@@ -126,8 +142,8 @@ const SpotifyApp = (props) => {
                 userName ?
                     <MainButton
                         style='main-button'
-                        onClick={createPlaylists}
-                        text='Create Playlists'
+                        onClick={registerRegions}
+                        text='Register Regions'
                     /> :
                     <MainButton
                         style='main-button'
@@ -138,13 +154,13 @@ const SpotifyApp = (props) => {
 
             {
                 userName &&
-                <ConsoleOutput text={consoleText}/>
+                <Output text={outputText}/>
             }
 
             {
                 userName &&
                 <MainButton style='main-button'
-                            onClick={reset}
+                            onClick={resetOutput}
                             text='Reset'/>
             }
             <Regions/>

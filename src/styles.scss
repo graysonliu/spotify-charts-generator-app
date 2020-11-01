@@ -150,18 +150,19 @@ button {
 
 .description {
   @include flex_justify_content;
-  margin-top: 0.5rem;
+  margin: 0.5rem 3rem 0;
 
   span {
     font-size: 0.75rem;
-    white-space: nowrap;
+    text-align: center;
+    white-space: pre-wrap;
     a {
       text-decoration: none;
     }
   }
 }
 
-.console-output {
+.output {
   display: flex;
   margin: 0.5rem 5rem 0;
   background-color: white;
