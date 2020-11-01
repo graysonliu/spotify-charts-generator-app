@@ -27,7 +27,7 @@ jobs:
 
       - name: Build site
         env:
-          SERVER_URI: 'https://66.112.218.89:3000'
+          SERVER_URI: 'http://spotify.zijian.xyz:3000'
         run: npm run build
 
       - name: Deploy
