@@ -81,7 +81,7 @@ module.exports = async (env, argv) => {
                 ],
                 // for Google Analytics
                 googleAnalytics: {
-                    measurement_id: 'G-753HJBQ90Q'
+                    measurement_id: 'G-LR3X62X1VR'
                 },
                 // inject environment variables into pages at build time
                 window: {
