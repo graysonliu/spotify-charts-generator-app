@@ -130,6 +130,10 @@ button {
     height: $font-size;
     width: $font-size;
   }
+
+  input:checked[type=checkbox] + span {
+    background-color: lightblue;
+  }
 }
 
 .region-item {
@@ -156,6 +160,7 @@ button {
     font-size: 0.75rem;
     text-align: center;
     white-space: pre-wrap;
+
     a {
       text-decoration: none;
     }
