@@ -8,7 +8,7 @@ const dotenv = require('dotenv')
 const fs = require('fs');
 
 module.exports = async (env, argv) => {
-    const paths = ['/spotify-charts-generator-static'];
+    const paths = ['/spotify-charts-generator-app'];
     const isDevelopment = argv.mode === 'development';
 
     const config = {
