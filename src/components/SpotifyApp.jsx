@@ -104,8 +104,13 @@ const SpotifyApp = (props) => {
         if (regionsToDeregister.length !== 0) {
             const confirm = window.confirm('Are you sure you want to deregister following regions: ' +
                 regionsToDeregister.map((region_code => regionNameList[region_code])).join(', ') + '?');
-            if (!confirm)
+            if (!confirm) {
+                const recheck = {};
+                for (const region_code of regionsToDeregister)
+                    recheck[region_code] = true;
+                dispatch(changeRegionsCheck(recheck));
                 return;
+            }
         }
 
         appendOutputText('Updating Registered Regions...');
