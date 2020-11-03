@@ -138,6 +138,11 @@ button {
 
 .region-item {
   @extend %checkbox-item;
+
+  svg {
+    margin: auto;
+    height: 0.6rem;
+  }
 }
 
 .select-all-item {
