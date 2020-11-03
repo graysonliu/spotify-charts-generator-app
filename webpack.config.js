@@ -6,10 +6,14 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const SitemapWebpackPlugin = require('sitemap-webpack-plugin').default;
 const dotenv = require('dotenv')
 const fs = require('fs');
+const os = require('os');
 
 module.exports = async (env, argv) => {
     const paths = ['/spotify-charts-generator-app'];
     const isDevelopment = argv.mode === 'development';
+
+    // get LAN address for testing on other devices
+    const lan_address = os.networkInterfaces().wlo1[0].address;
 
     const config = {
         entry: {
@@ -60,6 +64,7 @@ module.exports = async (env, argv) => {
         devServer: {
             contentBase: path.join(__dirname, ""),
             port: 3001,
+            host: '0.0.0.0',
             hotOnly: true
         },
         plugins: [
@@ -86,7 +91,10 @@ module.exports = async (env, argv) => {
                 // inject environment variables into pages at build time
                 window: {
                     env: {
-                        server_uri: process.env.SERVER_URI,
+                        server_uri:
+                            isDevelopment ?
+                                'http://' + lan_address + ':3000' :
+                                process.env.SERVER_URI,
                     }
                 },
             }),
