@@ -21,6 +21,7 @@ html, body, #root, .app {
     font-size: 5vw;
   }
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 button {
