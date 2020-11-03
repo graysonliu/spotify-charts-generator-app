@@ -13,7 +13,9 @@ module.exports = async (env, argv) => {
     const isDevelopment = argv.mode === 'development';
 
     // get LAN address for testing on other devices
-    const lan_address = os.networkInterfaces().wlo1[0].address;
+    let lan_address = null;
+    if (isDevelopment)
+        lan_address = os.networkInterfaces().wlo1[0].address;
 
     const config = {
         entry: {
