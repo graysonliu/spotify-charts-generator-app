@@ -8,7 +8,6 @@ $width-low-bound: 320px;
 
 html, body, #root, .app {
   width: 100vw;
-  height: 100vh;
   margin: 0;
   background-color: floralwhite;
   @media screen and (max-width: $width-low-bound) {
@@ -20,15 +19,7 @@ html, body, #root, .app {
   @media screen and (max-width: $width-high-bound) and (min-width: $width-low-bound) {
     font-size: 5vw;
   }
-}
-
-body {
   overflow-x: hidden;
-}
-
-#root {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 button {
