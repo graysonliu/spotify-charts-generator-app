@@ -20,7 +20,14 @@ html, body, #root, .app {
   @media screen and (max-width: $width-high-bound) and (min-width: $width-low-bound) {
     font-size: 5vw;
   }
+}
+
+body {
   overflow-x: hidden;
+}
+
+#root {
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
