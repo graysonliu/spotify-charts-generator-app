@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef} from "react";
 import processURL from "../utils/process_url";
 import "../styles.scss"
-import "flag-icon-css/css/flag-icon.min.css"
 import MyLogo from "./MyLogo";
 import Regions from "./regions/Regions";
 import MainButton from "./MainButton";

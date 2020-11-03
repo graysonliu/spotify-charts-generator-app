@@ -4,6 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {changeRegionsCheck, initCheckList, changeAllCheck} from "./regionsCheckSlice";
 import {initNameList} from "./regionsNameSlice";
 import {server_request} from "../../utils/server_request";
+import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 
 const RegionItem = (props) => {
     const dispatch = useDispatch();
@@ -21,8 +22,7 @@ const RegionItem = (props) => {
                 checked={props.checked}
                 onChange={onChange}
             />
-            <span>{` ${props.region_name} `}</span>
-            <span className={`flag-icon flag-icon-${props.region_code}`}/>
+            <span>{` ${props.region_name} ${props.region_code==='global'?'':getUnicodeFlagIcon(props.region_code)} `}</span>
         </div>);
 }
 
