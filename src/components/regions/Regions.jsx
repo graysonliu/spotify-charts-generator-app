@@ -4,7 +4,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import {changeRegionsCheck, initCheckList, changeAllCheck} from "./regionsCheckSlice";
 import {initNameList} from "./regionsNameSlice";
 import {server_request} from "../../utils/server_request";
-import emoji from 'node-emoji';
+import getUnicodeFlagIcon from 'country-flag-icons/unicode';
+import Flags from 'country-flag-icons/react/3x2';
 
 const RegionItem = (props) => {
     const dispatch = useDispatch();
@@ -15,6 +16,10 @@ const RegionItem = (props) => {
         }))
     }
 
+    let FlagComponent = null;
+    if (props.region_code !== 'global')
+        FlagComponent = Flags[props.region_code.toUpperCase()];
+
     return (
         <div className='region-item'>
             <input
@@ -22,7 +27,17 @@ const RegionItem = (props) => {
                 checked={props.checked}
                 onChange={onChange}
             />
-            <span>{` ${props.region_name}${props.region_code === 'global' ? '' : ' ' + emoji.get('flag-' + props.region_code)}`} </span>
+            <span>{` ${props.region_name} `}</span>
+            {/* region code 'global' does not have a flag */}
+            {/* windows does not support country flag emoji */}
+            {/* using svg instead if it is windows */}
+            {
+                FlagComponent &&
+                (window.navigator.platform.toLowerCase().indexOf('win') === -1 ?
+                    <span>{getUnicodeFlagIcon(props.region_code)}</span> :
+                    <FlagComponent/>)
+            }
+
         </div>);
 }
 

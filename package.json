@@ -35,6 +35,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
     "cheerio": "^1.0.0-rc.3",
+    "country-flag-icons": "^1.2.6",
     "dotenv": "^8.2.0",
     "jquery": "^3.5.1",
     "node-emoji": "^1.10.0",
