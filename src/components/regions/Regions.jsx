@@ -16,7 +16,7 @@ const RegionItem = (props) => {
         (
             props.isWindows ?
                 import('country-flag-icons/react/3x2').then(({default: Flags}) => {
-                        FlagComponent.current = Flags[props.region_code.toUpperCase()]
+                        FlagComponent.current = React.createElement(Flags[props.region_code.toUpperCase()]);
                         setFlagLoaded(true);
                     }
                 ) :
