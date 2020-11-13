@@ -1,24 +1,37 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import '../../styles.scss'
 import {useSelector, useDispatch} from 'react-redux';
 import {changeRegionsCheck, initCheckList, changeAllCheck} from "./regionsCheckSlice";
 import {initNameList} from "./regionsNameSlice";
 import {server_request} from "../../utils/server_request";
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import Flags from 'country-flag-icons/react/3x2';
 
 const RegionItem = (props) => {
     const dispatch = useDispatch();
+    const [flagLoaded, setFlagLoaded] = useState(false);
+
+    const FlagComponent = useRef(null);
+
+    useEffect(() => {
+        props.region_code !== 'global' &&
+        (
+            props.isWindows ?
+                import('country-flag-icons/react/3x2').then(({default: Flags}) => {
+                        FlagComponent.current = Flags[props.region_code.toUpperCase()]
+                        setFlagLoaded(true);
+                    }
+                ) :
+                import('country-flag-icons/unicode').then(({default: getUnicodeFlagIcon}) => {
+                    FlagComponent.current = <span>{getUnicodeFlagIcon(props.region_code)}</span>
+                    setFlagLoaded(true);
+                })
+        );
+    }, [props.region_code, props.isWindows]);
 
     const onChange = (e) => {
         dispatch(changeRegionsCheck({
             [props.region_code]: e.target.checked
         }))
     }
-
-    let FlagComponent = null;
-    if (props.region_code !== 'global')
-        FlagComponent = Flags[props.region_code.toUpperCase()];
 
     return (
         <div className='region-item'>
@@ -32,12 +45,8 @@ const RegionItem = (props) => {
             {/* windows does not support country flag emoji */}
             {/* using svg instead if it is windows */}
             {
-                FlagComponent &&
-                (window.navigator.platform.toLowerCase().indexOf('win') === -1 ?
-                    <span>{getUnicodeFlagIcon(props.region_code)}</span> :
-                    <FlagComponent/>)
+                flagLoaded && FlagComponent.current
             }
-
         </div>);
 }
 
@@ -64,6 +73,7 @@ const RegionList = (props) => {
     const regionCheckList = useSelector((state) => state.regionCheckList);
     const regionNameList = useSelector((state) => state.regionNameList);
     const region_item_list = [];
+    const isWindows = window.navigator.platform.toUpperCase().indexOf('WIN') !== -1;
 
     for (const region_code of Object.keys(regionCheckList)) {
         region_item_list.push(
@@ -72,6 +82,7 @@ const RegionList = (props) => {
                 region_code={region_code}
                 region_name={regionNameList[region_code]}
                 checked={regionCheckList[region_code]}
+                isWindows={isWindows}
             />
         );
     }

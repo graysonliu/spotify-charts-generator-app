@@ -34,7 +34,8 @@ const SpotifyApp = (props) => {
                 get_user_info(event.data);
             }
         };
-        window.addEventListener("message", auth_callback, false);
+        window.removeEventListener("message", auth_callback);
+        window.addEventListener("message", auth_callback);
     }, [regionNameList]);
 
     useEffect(() => {
