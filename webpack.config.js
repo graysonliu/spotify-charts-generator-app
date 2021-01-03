@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const SitemapWebpackPlugin = require('sitemap-webpack-plugin').default;
 const dotenv = require('dotenv')
@@ -17,7 +17,7 @@ module.exports = async (env, argv) => {
     if (isDevelopment) {
         const interfaces = os.networkInterfaces();
         for (const key in interfaces) {
-            if (key.indexOf('eth') === 0 || key.indexOf('wlo') === 0) {
+            if (key.indexOf('eth') === 0 || key.indexOf('wlo') === 0 || key.indexOf('wifi') === 0) {
                 for (const ipInfo of interfaces[key]) {
                     const address = ipInfo.address;
                     const netmask = ipInfo.netmask;
@@ -73,7 +73,7 @@ module.exports = async (env, argv) => {
                 }
             ]
         },
-        resolve: {extensions: ["*", ".js", ".jsx"]},
+        resolve: { extensions: ["*", ".js", ".jsx"] },
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: '[name].bundle.js',
@@ -116,7 +116,7 @@ module.exports = async (env, argv) => {
                 },
             }),
             new SitemapWebpackPlugin('https://graysonliu.github.io', paths,
-                {skipgzip: true})
+                { skipgzip: true })
         ].filter(Boolean)
     };
 
