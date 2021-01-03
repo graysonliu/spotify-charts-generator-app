@@ -14,8 +14,23 @@ module.exports = async (env, argv) => {
 
     // get LAN address for testing on other devices
     let lan_address = null;
-    if (isDevelopment)
-        lan_address = os.networkInterfaces().wlo1[0].address;
+    if (isDevelopment) {
+        const interfaces = os.networkInterfaces();
+        for (const key in interfaces) {
+            if (key.indexOf('eth') === 0 || key.indexOf('wlo') === 0) {
+                for (const ipInfo of interfaces[key]) {
+                    const address = ipInfo.address;
+                    const netmask = ipInfo.netmask;
+                    if (netmask === '255.255.255.0' && address.indexOf('192.168.') === 0) {
+                        lan_address = address;
+                        break
+                    }
+                }
+            }
+            if (lan_address)
+                break;
+        }
+    }
 
     const config = {
         entry: {
