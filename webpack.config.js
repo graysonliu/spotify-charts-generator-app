@@ -78,15 +78,17 @@ module.exports = async (env, argv) => {
             path: path.resolve(__dirname, 'dist'),
             filename: '[name].bundle.js',
         },
-        devServer: {
-            contentBase: path.join(__dirname, ""),
-            port: 3001,
-            host: '0.0.0.0',
-            hotOnly: true,
-            https: true,
-            key: fs.readFileSync('./certificates/privkey.pem'),
-            cert: fs.readFileSync('./certificates/cert.pem')
-        },
+        ...(isDevelopment && {
+            devServer: {
+                contentBase: path.join(__dirname, ""),
+                port: 3001,
+                host: '0.0.0.0',
+                hotOnly: true,
+                https: true,
+                key: fs.readFileSync('./certificates/privkey.pem'),
+                cert: fs.readFileSync('./certificates/cert.pem')
+            }
+        }),
         plugins: [
             new webpack.DefinePlugin({
                 'process.env': JSON.stringify(dotenv.config().parsed)
@@ -116,7 +118,7 @@ module.exports = async (env, argv) => {
                     }
                 },
             }),
-            new SitemapWebpackPlugin('https://spotify.zijian.xyz', paths,
+            new SitemapWebpackPlugin('https://zijian.xyz', paths,
                 { skipgzip: true })
         ].filter(Boolean)
     };
