@@ -12,17 +12,17 @@ module.exports = async (env, argv) => {
     const paths = ['/spotify-charts-generator-app'];
     const isDevelopment = argv.mode === 'development';
 
-    // get LAN address for testing on other devices
+    // get LAN address for local testing on other devices
     let lan_address = null;
     if (isDevelopment) {
         const interfaces = os.networkInterfaces();
         for (const key in interfaces) {
             if (key.indexOf('eth') === 0 || key.indexOf('wlo') === 0 || key.indexOf('wifi') === 0) {
                 for (const ipInfo of interfaces[key]) {
-                    const address = ipInfo.address;
-                    const netmask = ipInfo.netmask;
-                    if (netmask === '255.255.255.0' && address.indexOf('192.168.') === 0) {
-                        lan_address = address;
+                    const internal = ipInfo.internal;
+                    const family = ipInfo.family;
+                    if (!internal && family === 'IPv4') {
+                        lan_address = ipInfo.address;
                         break
                     }
                 }
@@ -82,7 +82,10 @@ module.exports = async (env, argv) => {
             contentBase: path.join(__dirname, ""),
             port: 3001,
             host: '0.0.0.0',
-            hotOnly: true
+            hotOnly: true,
+            https: true,
+            key: fs.readFileSync('./certificates/privkey.pem'),
+            cert: fs.readFileSync('./certificates/cert.pem')
         },
         plugins: [
             new webpack.DefinePlugin({
@@ -109,24 +112,14 @@ module.exports = async (env, argv) => {
                 window: {
                     env: {
                         server_uri:
-                            isDevelopment ?
-                                'http://' + lan_address + ':3000' :
-                                process.env.SERVER_URI,
+                            isDevelopment ? `https://${lan_address}:3000` : process.env.SERVER_URI
                     }
                 },
             }),
-            new SitemapWebpackPlugin('https://graysonliu.github.io', paths,
+            new SitemapWebpackPlugin('https://spotify.zijian.xyz', paths,
                 { skipgzip: true })
         ].filter(Boolean)
     };
 
-    // for HTTPS
-    // if (isDevelopment)
-    //     config.devServer = {
-    //         ...config.devServer,
-    //         https: true,
-    //         key: fs.readFileSync('key.pem'),
-    //         cert: fs.readFileSync('cert.pem'),
-    //     }
     return config;
 };
