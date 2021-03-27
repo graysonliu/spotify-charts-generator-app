@@ -27,8 +27,10 @@ module.exports = async (env, argv) => {
                     }
                 }
             }
-            if (lan_address)
+            if (lan_address) {
+                console.log(lan_address);
                 break;
+            }
         }
     }
 
