@@ -1,13 +1,13 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import processURL from "../utils/process_url";
-import "../styles.scss"
+import "../styles.scss";
 import MyLogo from "./MyLogo";
 import Regions from "./regions/Regions";
 import MainButton from "./MainButton";
 import Output from "./Output";
-import {server_request} from "../utils/server_request";
-import {useDispatch, useSelector} from "react-redux";
-import {changeRegionsCheck, changeAllCheck} from "./regions/regionsCheckSlice";
+import { server_request } from "../utils/server_request";
+import { useDispatch, useSelector } from "react-redux";
+import { changeRegionsCheck, changeAllCheck } from "./regions/regionsCheckSlice";
 
 const SpotifyApp = (props) => {
     const [userName, setUserName] = useState(null);
@@ -49,11 +49,11 @@ const SpotifyApp = (props) => {
     const resetOutput = () => {
         loginReset();
         outputRegisteredRegions();
-    }
+    };
 
     const loginReset = () => {
         setOutputText(() => `- Logged in as "${userName}"`);
-    }
+    };
 
     const outputRegisteredRegions = () => {
         if (registeredRegions.length === 0)
@@ -77,7 +77,7 @@ const SpotifyApp = (props) => {
         setUserName(body['user_name']);
         setUserId(body['user_id']);
         setRegisteredRegions(body['registered_regions']);
-    }
+    };
 
     const handleClickLoginButton = () => {
         popup.current = window.open('https://accounts.spotify.com/authorize' +
@@ -86,7 +86,7 @@ const SpotifyApp = (props) => {
             (props.scopes ? '&scope=' + encodeURIComponent(props.scopes) : '') +
             '&redirect_uri=' + encodeURIComponent(props.redirect_uri),
             'Login with Spotify');
-    }
+    };
 
     const registerRegions = async () => {
         const selected_regions = [];
@@ -100,7 +100,7 @@ const SpotifyApp = (props) => {
         const regionsToDeregister = [];
         for (const region_code of registeredRegions)
             if (!regionCheckList[region_code])
-                regionsToDeregister.push(region_code)
+                regionsToDeregister.push(region_code);
         if (regionsToDeregister.length !== 0) {
             const confirm = window.confirm('Are you sure you want to deregister following regions: ' +
                 regionsToDeregister.map((region_code => regionNameList[region_code])).join(', ') + '?');
@@ -122,35 +122,35 @@ const SpotifyApp = (props) => {
                 user_id: userId,
                 regions_to_register: selected_regions
             }
-        )
+        );
 
         setRegisteredRegions(body['registered_regions']);
-    }
+    };
 
     const appendOutputText = (text) => {
         setOutputText((preText) => `${preText}\n- ${text}`);
-    }
+    };
 
-    const queries = processURL(window.location.href)
+    const queries = processURL(window.location.href);
     // spotify authentication
     if (!userName && 'code' in queries) {
         // authenticated and this is a popup window
         // window.opener is the main window
         window.opener && window.opener.postMessage(queries['code'], window.opener.location.origin);
-        return (<div/>);
+        return (<div />);
     }
     if (!userName && 'error' in queries) {
         // authentication canceled and this is a popup window
         // window.opener is the main window
         window.opener && window.opener.postMessage(null, window.opener.location.origin);
-        return (<div/>);
+        return (<div />);
     }
 
     return (
         <div className='app'>
-            <MyLogo style='my-logo-header'/>
+            <MyLogo style='my-logo-header' />
             <div className='description'>
-                    <span>Create and keep updating playlists of daily charts from&nbsp;
+                <span>Create and keep updating playlists of daily charts from&nbsp;
                         <a href='https://spotifycharts.com' target='_blank'>Spotify Charts</a>
                         !
                     </span>
@@ -171,18 +171,18 @@ const SpotifyApp = (props) => {
 
             {
                 userName &&
-                <Output text={outputText}/>
+                <Output text={outputText} />
             }
 
             {
                 userName &&
                 <MainButton style='main-button'
-                            onClick={resetOutput}
-                            text='Reset'/>
+                    onClick={resetOutput}
+                    text='Reset' />
             }
-            <Regions/>
+            <Regions />
         </div>
     );
-}
+};
 
 export default SpotifyApp;
