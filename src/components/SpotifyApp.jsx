@@ -151,7 +151,7 @@ const SpotifyApp = (props) => {
             <MyLogo style='my-logo-header' />
             <div className='description'>
                 <span>Create and keep updating playlists of daily charts from&nbsp;
-                        <a href='https://spotifycharts.com' target='_blank'>Spotify Charts</a>
+                        <a href='https://spotifycharts.com' target='_blank' rel='noreferrer'>Spotify Charts</a>
                         !
                     </span>
             </div>
