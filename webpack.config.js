@@ -23,7 +23,7 @@ module.exports = async (env, argv) => {
                     const family = ipInfo.family;
                     if (!internal && family === 'IPv4') {
                         lan_address = ipInfo.address;
-                        break
+                        break;
                     }
                 }
             }
@@ -116,7 +116,7 @@ module.exports = async (env, argv) => {
                 window: {
                     env: {
                         server_uri:
-                            isDevelopment ? `https://${lan_address}:3000` : process.env.SERVER_URI
+                            isDevelopment ? `https://localhost:3000` : process.env.SERVER_URI
                     }
                 },
             }),

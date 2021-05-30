@@ -1,25 +1,36 @@
 $width-high-bound: 640px;
 $width-low-bound: 320px;
 
-@mixin flex_justify_content {
+@mixin flex_center {
   display: flex;
   justify-content: center;
 }
 
-html, body, #root, .app {
+@mixin sticky_to_center {
+  position: sticky;
+}
+
+html,
+body,
+#root,
+.app {
   width: 100vw;
+  height: 100vh;
   margin: 0;
   background-color: floralwhite;
+  display: flex;
+  flex-direction: column;
   @media screen and (max-width: $width-low-bound) {
-    font-size: 0.05*$width-low-bound;
+    font-size: 0.05 * $width-low-bound;
   }
   @media screen and (min-width: $width-high-bound) {
-    font-size: 0.05*$width-high-bound;
+    font-size: 0.05 * $width-high-bound;
   }
   @media screen and (max-width: $width-high-bound) and (min-width: $width-low-bound) {
     font-size: 5vw;
   }
-  overflow-x: hidden;
+
+  overflow: hidden;
 }
 
 button {
@@ -31,7 +42,7 @@ button {
 
 @keyframes rotation {
   from {
-    transform: rotate(0deg)
+    transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
@@ -43,13 +54,13 @@ button {
 }
 
 .image-link {
-  display: inline-flex;
-
   img {
     transition: 0.25s;
   }
 
-  a, a:link, a:visited {
+  a,
+  a:link,
+  a:visited {
     text-decoration: none;
     display: flex;
   }
@@ -71,13 +82,13 @@ button {
 
 .my-logo-header {
   @extend %my-logo-shared;
-  @include flex_justify_content;
+  @include flex_center;
   margin-top: 0.5rem;
 
   .image-link {
     img {
       height: 2rem;
-      @include rotating-img
+      @include rotating-img;
     }
 
     @media (any-hover: hover) {
@@ -95,7 +106,7 @@ button {
 }
 
 .main-button {
-  @include flex_justify_content;
+  @include flex_center;
   margin-top: 1rem;
 
   button {
@@ -104,12 +115,12 @@ button {
     color: white;
     font-weight: bold;
     letter-spacing: 0.02rem;
-    background-color: #1DB954;
+    background-color: #1db954;
   }
 
   @media (any-hover: hover) {
     button:hover {
-      background-color: #1ED760;
+      background-color: #1ed760;
     }
   }
 
@@ -119,18 +130,18 @@ button {
 }
 
 %checkbox-item {
-  @include flex_justify_content;
+  // @include flex_justify_content;
   white-space: pre;
   $font-size: 0.8rem;
   font-size: $font-size;
   padding: $font-size/1.5;
 
-  input[type=checkbox] {
+  input[type="checkbox"] {
     height: $font-size;
     width: $font-size;
   }
 
-  input:checked[type=checkbox] + span {
+  input:checked[type="checkbox"] + span {
     background-color: lightblue;
   }
 }
@@ -142,6 +153,17 @@ button {
     margin: auto;
     height: 0.6rem;
   }
+
+  td {
+    text-align: center;
+    background-color: floralwhite;
+  }
+
+  td:nth-child(1) {
+    text-align: left;
+    position: sticky;
+    left: 0;
+  }
 }
 
 .select-all-item {
@@ -150,14 +172,38 @@ button {
   margin-bottom: -0.75rem;
 }
 
+.region-list-header {
+  font-size: 0.75rem;
+
+  th {
+    padding: 0 1rem;
+    font-weight: normal;
+    font-size: 0.5rem;
+    position: sticky;
+    top: 0;
+    background-color: floralwhite;
+    z-index: 1;
+  }
+
+  th:nth-child(1) {
+    left: 0;
+    z-index: 2;
+  }
+}
+
 .region-list {
-  @include flex_justify_content;
-  flex-wrap: wrap;
   margin: 1rem 1rem;
+  margin-bottom: 0;
+  overflow: scroll;
+
+  table {
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
 }
 
 .description {
-  @include flex_justify_content;
+  @include flex_center;
   margin: 0.5rem 3rem 0;
 
   span {
