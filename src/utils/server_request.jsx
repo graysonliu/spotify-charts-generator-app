@@ -19,4 +19,4 @@ export const server_request = async (endpoint, method = 'GET', data) => {
                 }
             );
     return await response.json();
-}
+};

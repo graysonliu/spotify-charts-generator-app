@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import '../styles.scss'
+import React, { Component } from "react";
+import '../styles.scss';
 
 class ImageLink extends Component {
     constructor(props) {
@@ -10,14 +10,14 @@ class ImageLink extends Component {
         return (
             <div className='image-link'>
                 <a href={this.props.href || '#'}
-                   target={this.props.target || '_blank'}
+                    target={this.props.target || '_blank'}
                 >
                     <img src={this.props.img}
-                         alt={this.props.alt || ''}
+                        alt={this.props.alt || ''}
                     />
                 </a>
             </div>);
     }
 }
 
-export default ImageLink
+export default ImageLink;

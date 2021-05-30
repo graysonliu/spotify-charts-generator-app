@@ -1,10 +1,13 @@
-import {configureStore} from '@reduxjs/toolkit';
-import regionsCheckReducer from './components/regions/regionsCheckSlice';
-import regionsNameReducer from './components/regions/regionsNameSlice';
+import { configureStore } from '@reduxjs/toolkit';
+import chartCheckReducer from './components/regions/chartCheckSlice';
+import regionNameReducer from './components/regions/regionsNameSlice';
+import chartOptionReducer from './components/regions/chartOptionsSlice';
+
 
 export default configureStore({
     reducer: {
-        regionCheckList: regionsCheckReducer,
-        regionNameList: regionsNameReducer
+        chartCheckList: chartCheckReducer,
+        regionNameList: regionNameReducer,
+        chartOptionList: chartOptionReducer
     },
 });

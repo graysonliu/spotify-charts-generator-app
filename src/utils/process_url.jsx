@@ -1,6 +1,6 @@
 // https://example.com/callback?code=...&state=...
 const processURL = url => {
-    const queries = {}
+    const queries = {};
     url.indexOf('?') !== -1 && url.substring(url.indexOf('?') + 1)
         .split('&')
         .map(queryString => {
@@ -8,6 +8,6 @@ const processURL = url => {
             queries[key] = decodeURIComponent(val);
         });
     return queries;
-}
+};
 
 export default processURL;

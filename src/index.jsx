@@ -25,7 +25,7 @@ const start_render = async () => {
         </React.StrictMode>,
         document.getElementById("root")
     );
-}
+};
 
 start_render();
 

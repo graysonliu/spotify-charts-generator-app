@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import ImageLink from "./ImageLink";
 import logo_thinking from "../images/thinking.svg";
 
@@ -19,4 +19,4 @@ class MyLogo extends Component {
     }
 }
 
-export default MyLogo
+export default MyLogo;
