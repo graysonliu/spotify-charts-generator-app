@@ -11,5 +11,5 @@ const regionsNameSlice = createSlice({
     }
 });
 
-export const {initRegionList: initRegionList} = regionsNameSlice.actions;
+export const {initRegionList} = regionsNameSlice.actions;
 export default regionsNameSlice.reducer;

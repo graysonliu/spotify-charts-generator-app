@@ -223,8 +223,34 @@ button {
   width: 15rem;
   background-color: white;
 
+  p {
+    line-height: 0.6rem;
+    margin-block: 0;
+  }
+
   span {
     white-space: pre-wrap;
-    font-size: 0.5rem;
+    font-size: 0.6rem;
+  }
+
+  .underline {
+    text-decoration: underline;
+    .float-text {
+      visibility: hidden;
+      position: absolute;
+      font-weight: lighter;
+      font-size: 0.5rem;
+      color: gray;
+      background-color: floralwhite;
+      opacity: 0.95;
+      z-index: 3;
+      
+    }
+  }
+
+  .underline:hover {
+    .float-text {
+      visibility: visible;
+    }
   }
 }
