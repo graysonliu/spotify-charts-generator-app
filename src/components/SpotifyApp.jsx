@@ -8,12 +8,13 @@ import Output from "./Output";
 import { server_request } from "../utils/server_request";
 import { useDispatch, useSelector } from "react-redux";
 import { changeChartCheck, changeAllCheck } from "./regions/chartCheckSlice";
+import { updateRegisteredList } from "./regions/registeredChartsSlice";
 
 const SpotifyApp = (props) => {
     const [userName, setUserName] = useState(null);
     const [userId, setUserId] = useState(null);
     const [outputText, setOutputText] = useState('');
-    const [registeredCharts, setRegisteredCharts] = useState([]);
+    const [buttonText, setButtonText] = useState('Login with Spotify');
 
     // the popup window
     const popup = useRef(null);
@@ -22,6 +23,7 @@ const SpotifyApp = (props) => {
     const chartCheckList = useSelector((state) => state.chartCheckList);
     const regionNameList = useSelector((state) => state.regionNameList);
     const chartOptionList = useSelector((state) => state.chartOptionList);
+    const registeredChartList = useSelector((state) => state.registeredChartList);
 
     // for receiving auth code from the popup window
     useEffect(() => {
@@ -41,34 +43,25 @@ const SpotifyApp = (props) => {
 
     useEffect(() => {
         loginReset();
-    }, [userName]);
+    }, [userName, registeredChartList]);
 
     useEffect(() => {
-        outputRegisteredRegions();
-    }, [registeredCharts]);
+        checkRegisteredRegions();
+    }, [registeredChartList]);
 
-    const resetOutput = () => {
-        loginReset();
-        outputRegisteredRegions();
+    const resetCheck = () => {
+        checkRegisteredRegions();
     };
 
     const loginReset = () => {
-        setOutputText(() => `- Logged in as "${userName}"`);
+        setButtonText(userName ? "Register Playlists" : "Login with Spotify");
+        setOutputText(() => `- Logged in as "${userName}".`);
     };
 
-    const outputRegisteredRegions = () => {
-        loginReset();
-        if (registeredCharts.length === 0)
-            appendOutputText('No Registered Regions');
-        else
-            appendOutputText('Registered Regions:' +
-                registeredCharts.map(chart_code => decodeChartCode(chart_code))
-                    .reduce((str, chart_name) => `${str}\n\t- ${chart_name}`, '')
-            );
-
+    const checkRegisteredRegions = () => {
         dispatch(changeAllCheck(false));
         const registeredChartsCheck = {};
-        for (const chart_code of registeredCharts) {
+        for (const chart_code of registeredChartList) {
             registeredChartsCheck[chart_code] = true;
         }
         dispatch(changeChartCheck(registeredChartsCheck));
@@ -78,7 +71,7 @@ const SpotifyApp = (props) => {
         const body = await server_request(`/users?code=${code}`);
         setUserName(body['user_name']);
         setUserId(body['user_id']);
-        setRegisteredCharts(body['registered_charts']);
+        dispatch(updateRegisteredList(body['registered_charts']));
     };
 
     const handleClickLoginButton = () => {
@@ -100,12 +93,12 @@ const SpotifyApp = (props) => {
 
         // ask user to confirm deregister
         const chartsToDeregister = [];
-        for (const chart_code of registeredCharts)
+        for (const chart_code of registeredChartList)
             if (!chartCheckList[chart_code])
                 chartsToDeregister.push(chart_code);
         if (chartsToDeregister.length !== 0) {
-            const confirm = window.confirm('Are you sure you want to deregister following chart(s): ' +
-                chartsToDeregister.map((chart_code => decodeChartCode(chart_code))).join(', ') + '?');
+            const confirm = window.confirm('Are you sure you want to deregister following chart(s)?\n - ' +
+                chartsToDeregister.map((chart_code => decodeChartCode(chart_code))).join('\n - '));
             if (!confirm) {
                 const recheck = {};
                 for (const region_code of chartsToDeregister)
@@ -115,7 +108,7 @@ const SpotifyApp = (props) => {
             }
         }
 
-        appendOutputText('Updating Registered Regions...');
+        setButtonText("Registering...");
 
         const body = await server_request(
             '/charts',
@@ -125,8 +118,7 @@ const SpotifyApp = (props) => {
                 charts_to_register: selected_charts
             }
         );
-
-        setRegisteredCharts(body['registered_charts']);
+        dispatch(updateRegisteredList(body['registered_charts']));
     };
 
     const appendOutputText = (text) => {
@@ -165,17 +157,11 @@ const SpotifyApp = (props) => {
                     </span>
             </div>
             {
-                userName ?
-                    <MainButton
-                        style='main-button'
-                        onClick={registerRegions}
-                        text='Register Regions'
-                    /> :
-                    <MainButton
-                        style='main-button'
-                        onClick={handleClickLoginButton}
-                        text='Login with Spotify'
-                    />
+                <MainButton
+                    style='main-button'
+                    onClick={userName ? registerRegions : handleClickLoginButton}
+                    text={buttonText}
+                />
             }
 
             {
@@ -186,7 +172,7 @@ const SpotifyApp = (props) => {
             {
                 userName &&
                 <MainButton style='main-button'
-                    onClick={resetOutput}
+                    onClick={resetCheck}
                     text='Reset' />
             }
             <Regions />
