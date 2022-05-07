@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const SitemapWebpackPlugin = require('sitemap-webpack-plugin').default;
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
 const fs = require('fs');
 const os = require('os');
 
