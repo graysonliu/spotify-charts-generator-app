@@ -31,7 +31,7 @@ const SpotifyApp = (props) => {
             // message source should be the popup window
             if (event.source !== popup.current)
                 return;
-            event.source.close(); // close the popup window
+            // event.source.close(); // close the popup window
             popup.current = null; // set popup back to null
             if (event.data) {
                 get_user_info(event.data);
